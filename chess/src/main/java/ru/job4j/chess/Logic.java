@@ -23,13 +23,19 @@ public class Logic {
 
     public boolean move(Cell source, Cell dest) {
         boolean rst = false;
-        int index = this.findBy(source);
-        if (index != -1) {
-            Cell[] steps = this.figures[index].way(source, dest);
-            if (steps.length > 0 && steps[steps.length - 1].equals(dest)) {
-                rst = true;
-                this.figures[index] = this.figures[index].copy(dest);
+        try {
+            int index = this.findBy(source);
+            if (index != -1) {
+                Cell[] steps = this.figures[index].way(source, dest);
+                if (steps.length > 0 && steps[steps.length - 1].equals(dest)) {
+                    if (this.isWayFree(steps)) {
+                        rst = true;
+                        this.figures[index] = this.figures[index].copy(dest);
+                    }
+                }
             }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         return rst;
     }
@@ -46,6 +52,17 @@ public class Logic {
         for (int index = 0; index != this.figures.length; index++) {
             if (this.figures[index] != null && this.figures[index].position().equals(cell)) {
                 rst = index;
+                break;
+            }
+        }
+        return rst;
+    }
+
+    private boolean isWayFree(Cell[] steps) {
+        boolean rst = true;
+        for (Cell cell : steps) {
+            if (this.findBy(cell) != -1) {
+                rst = false;
                 break;
             }
         }
